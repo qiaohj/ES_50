@@ -4,11 +4,14 @@ library(gdalUtilities)
 
 setwd("/media/huijieqiao/SSD_Fast/ES50_eBird/ES_50")
 sf_use_s2(FALSE)
-
-states<-sf::st_read(dsn = "../Shape/gadm36_levels_shp", 
-                    layer = "gadm36_1")
-state_list<-data.table(GID_0=states$GID_0, GID_1=states$GID_1, 
-                       NAME_0=states$NAME_0, NAME_1=states$NAME_1)
+if (F){
+  states<-sf::st_read(dsn = "../Shape/gadm36_levels_shp", 
+                      layer = "gadm36_1")
+  state_list<-data.table(GID_0=states$GID_0, GID_1=states$GID_1, 
+                         NAME_0=states$NAME_0, NAME_1=states$NAME_1)
+  saveRDS(state_list, "../Tables/state_list.rda")
+}
+state_list<-readRDS("../Tables/state_list.rda")
 ebird_country_state<-readRDS("../Tables/COUNTRY_STATE_list_202112.rda")
 country_code<-data.table(read.csv("../Tables/country_code.csv", stringsAsFactors = F))
 i=1
