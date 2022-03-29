@@ -11,7 +11,7 @@ state_list<-readRDS("../Tables/state_list.rda")
 country_codes<-unique(state_list$GID_0)
 i=1
 i=212
-j=4
+j=2
 ll_crs <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 country_codes<-country_codes[sample(length(country_codes), length(country_codes))]
 for (i in c(1:length(country_codes))){

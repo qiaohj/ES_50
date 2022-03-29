@@ -29,6 +29,8 @@ for (i in c(1:length(country_codes))){
     checklist<-readRDS(sprintf("../Tables/eBird_mapbased_checklist_with_realm/%s/ebird_checklist_%s.rda", 
                                country, state))
     records<-readRDS(rda)
+    records[build_5km==65535]$build_5km<-NA
+    records[road_5km==65535]$road_5km<-NA
     records$build_2km_inout<-ifelse(is.na(records$build_2km), "out", "in")
     records$build_5km_inout<-ifelse(is.na(records$build_5km), "out", "in")
     records$road_2km_inout<-ifelse(is.na(records$road_2km), "out", "in")
@@ -94,3 +96,88 @@ for (i in c(1:length(country_codes))){
                                country, state))
   }
 }
+
+
+
+state_checklist<-list()
+state_all<-list()
+for (i in c(1:length(country_codes))){
+  country<-country_codes[i]
+  state_codes<-unique(state_list[GID_0==country]$GID_1)
+  state_item_checklist<-list()
+  state_item_all<-list()
+  for (j in c(1:length(state_codes))){
+    
+    state<-state_codes[j]
+    print(paste(i, "/", length(country_codes), ":", country, j, "/", length(state_codes), ":", state))
+    rda<-sprintf("../Tables/eBird_mapbased_checklist_with_realm/%s/ebird_build_road_%s.rda", 
+                 country, state)
+    
+    if (!file.exists(rda)){
+      next()
+    }
+    label<-paste(country, state)
+    checklist<-readRDS(sprintf("../Tables/eBird_mapbased_checklist_with_realm/%s/ebird_checklist_with_build_road_%s.rda", 
+                               country, state))
+    state_item_checklist[[label]]<-checklist
+    all<-checklist[, .(N=sum(N), 
+                      N_build_2km_in=sum(N_build_2km_in), N_build_2km_out=sum(N_build_2km_out),
+                      N_build_5km_in=sum(N_build_5km_in), N_build_5km_out=sum(N_build_5km_out),
+                      N_road_2km_in=sum(N_road_2km_in), N_road_2km_out=sum(N_road_2km_out),
+                      N_road_5km_in=sum(N_road_5km_in), N_road_5km_out=sum(N_road_5km_out)),
+                   by=list(COUNTRY, STATE, GID_0, GID_1)]
+    all$P_build_2km_in<-all$N_build_2km_in/(all$N_build_2km_in+all$N_build_2km_out)
+    all$P_build_5km_in<-all$N_build_5km_in/(all$N_build_5km_in+all$N_build_5km_out)
+    all$P_road_2km_in<-all$N_road_2km_in/(all$N_road_2km_in+all$N_road_2km_out)
+    all$P_road_5km_in<-all$N_road_5km_in/(all$N_road_5km_in+all$N_road_5km_out)
+    state_item_all[[label]]<-all
+  }
+  state_item_checklist<-rbindlist(state_item_checklist)
+  state_item_all<-rbindlist(state_item_all)
+  state_checklist[[country]]<-state_item_checklist
+  state_all[[country]]<-state_item_all
+}
+state_checklist<-rbindlist(state_checklist)
+state_all<-rbindlist(state_all)
+country_checklist<-state_checklist[, .(N=sum(N), 
+                                       N_build_2km_in=sum(N_build_2km_in), N_build_2km_out=sum(N_build_2km_out),
+                                       N_build_5km_in=sum(N_build_5km_in), N_build_5km_out=sum(N_build_5km_out),
+                                       N_road_2km_in=sum(N_road_2km_in), N_road_2km_out=sum(N_road_2km_out),
+                                       N_road_5km_in=sum(N_road_5km_in), N_road_5km_out=sum(N_road_5km_out)),
+                                   by=list(COUNTRY, GID_0, SCIENTIFIC_NAME)]
+
+country_checklist$P_build_2km_in<-country_checklist$N_build_2km_in/
+  (country_checklist$N_build_2km_in+country_checklist$N_build_2km_out)
+country_checklist$P_build_5km_in<-country_checklist$N_build_5km_in/
+  (country_checklist$N_build_5km_in+country_checklist$N_build_5km_out)
+country_checklist$P_road_2km_in<-country_checklist$N_road_2km_in/
+  (country_checklist$N_road_2km_in+country_checklist$N_road_2km_out)
+country_checklist$P_road_5km_in<-country_checklist$N_road_5km_in/
+  (country_checklist$N_road_5km_in+country_checklist$N_road_5km_out)
+
+
+country_all<-state_all[, .(N=sum(N), 
+                                       N_build_2km_in=sum(N_build_2km_in), N_build_2km_out=sum(N_build_2km_out),
+                                       N_build_5km_in=sum(N_build_5km_in), N_build_5km_out=sum(N_build_5km_out),
+                                       N_road_2km_in=sum(N_road_2km_in), N_road_2km_out=sum(N_road_2km_out),
+                                       N_road_5km_in=sum(N_road_5km_in), N_road_5km_out=sum(N_road_5km_out)),
+                                   by=list(COUNTRY, GID_0)]
+
+country_all$P_build_2km_in<-country_all$N_build_2km_in/
+  (country_all$N_build_2km_in+country_all$N_build_2km_out)
+country_all$P_build_5km_in<-country_all$N_build_5km_in/
+  (country_all$N_build_5km_in+country_all$N_build_5km_out)
+country_all$P_road_2km_in<-country_all$N_road_2km_in/
+  (country_all$N_road_2km_in+country_all$N_road_2km_out)
+country_all$P_road_5km_in<-country_all$N_road_5km_in/
+  (country_all$N_road_5km_in+country_all$N_road_5km_out)
+
+saveRDS(state_checklist, "../Tables/state_checklist_build_road.rda")
+saveRDS(state_all, "../Tables/state_all_build_road.rda")
+saveRDS(country_checklist, "../Tables/country_checklist_build_road.rda")
+saveRDS(country_all, "../Tables/country_all_build_road.rda")
+
+write.csv(state_checklist, "../Tables/state_checklist_build_road.csv", row.names = F)
+write.csv(state_all, "../Tables/state_all_build_road.csv", row.names = F)
+write.csv(country_checklist, "../Tables/country_checklist_build_road.csv", row.names = F)
+write.csv(country_all, "../Tables/country_all_build_road.csv", row.names = F)
