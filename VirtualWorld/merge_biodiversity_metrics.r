@@ -19,7 +19,7 @@ for (i in c(1:nrow(seeds))){
   seed<-seeds[i]
   folder<-sprintf("../Objects/virtual_lands/items/%d", i)
   target<-sprintf("%s/biodiversity.rda", folder)
-  if (F){
+  if (T){
     biod<-readRDS(target)
     biod_se_without_NA<-biod[, .(simpson=mean(v, na.rm=T), sd_simpson=sd(v, na.rm = T),
                                  shannon=mean(shannon, na.rm=T), sd_shannon=sd(shannon, na.rm = T),
