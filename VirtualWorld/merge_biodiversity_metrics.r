@@ -14,6 +14,7 @@ i=1
 full_mask<-readRDS("../Objects/full_mask.rda")
 biod_se_list<-list()
 es_se_list<-list()
+
 for (i in c(1:nrow(seeds))){
   print(i)
   seed<-seeds[i]
