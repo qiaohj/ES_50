@@ -22,7 +22,7 @@ if (F){
   full_mask<-rbindlist(full_mask)
   saveRDS(full_mask, "../Objects/full_mask.rda")
   mask<-raster("../Objects/mask.tif")
-  res<-100000
+  res<-250
   for (res in c(100000, 50000, 20000, 10000, 5000, 2000, 1000)){
     print(res)
     mask_10km<-projectRaster(mask, crs=crs(mask), res=c(res, res))
