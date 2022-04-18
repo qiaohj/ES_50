@@ -12,6 +12,7 @@ unique(sp_iucn_stauts$redlistCategory)
 sp_iucn_stauts<-sp_iucn_stauts[redlistCategory %in% 
                                  c("Least Concern", "Near Threatened", "Vulnerable", "Endangered",
                                    "Critically Endangered")]
+sp_iucn_stauts$N<-sp_iucn_stauts$N_Locality
 sp_iucn_stauts_country<-sp_iucn_stauts[, .(N_Species=length(unique(SCIENTIFIC_NAME)), N=sum(N), 
                                            mean_N=mean(N),
                                            N_Observer=sum(N_Observer)), 
