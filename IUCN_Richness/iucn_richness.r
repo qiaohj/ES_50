@@ -23,7 +23,7 @@ grids<-st_as_sf(x[1], as_points = FALSE, merge = FALSE, crs=st_crs(mask))
 st_crs(grids)<-st_crs(mask)
 grids$index<-c(1:nrow(grids))
 
-species_list<-list.files("../Objects/IUCN_Distributions/Birds_ECK4/RAW", pattern="\\.rda")
+species_list<-list.files("../Objects/IUCN_Distributions/Birds_MOLL/RAW", pattern="\\.rda")
 i<-262
 ensure_multipolygons <- function(X) {
   tmp1 <- tempfile(fileext = ".gpkg")

@@ -113,9 +113,9 @@ for (i in c(1:nrow(seeds))){
   folder<-sprintf("%s/%d", base, i)
   target<-sprintf("%s/biodiversity.rda", folder)
   if (file.exists(target)){
-    #if (file.size(target)>100){
+    if (file.size(target)>100){
       next()
-    #}
+    }
   }
   saveRDS(NULL, target)
   f<-sprintf("%s/observations.rda", folder)

@@ -53,6 +53,7 @@ selected_seeds<-seeds[, head(.SD, 1), by=binds]
 selected_seeds<-selected_seeds[c(seq(1, 100, by=10), 100)]
 selected_seeds<-selected_seeds[-6]
 selected_seeds$labels<-letters[1:10]
+saveRDS(selected_seeds, "../Objects/selected_seeds.rda")
 p<-ggplot(ndvi_p)+geom_tile(aes(x=x, y=y, fill=mean_ndvi_moll_10km))+coord_equal()
 p<-p+geom_point(data=seeds, aes(x=x, y=y), color=colors_blue[5], size=0.5)
 p<-p+geom_point(data=selected_seeds, aes(x=x, y=y), color=colors_red[8], size=1)
