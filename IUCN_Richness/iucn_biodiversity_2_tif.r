@@ -23,13 +23,26 @@ for (res_i in c("100km", "50km", "20km", "10km", "5km", "2km", "1km" )){
   masks_p[[res_i]]<-p
 }
 if (F){
+  sampling_proportion<-0.5
   folxxx<-"random_sampling"
   for (grid_index in c(1:nrow(picked_grids))){
-    print(paste(grid_index, folxxx))
-    
-    biod<-readRDS(sprintf("../Objects/GRIDS_S/%d/%s/biodiversity.rda", picked_grids[grid_index,]$index, folxxx))
-    target_folder<-sprintf("../Objects/GRIDS_TIF/%d/%s", picked_grids[grid_index,]$index, folxxx)
-    dir.create(target_folder, showWarnings = F, recursive = T)
+    print(paste(grid_index, folxxx, sampling_proportion))
+    if (sampling_proportion==1){
+      biod<-readRDS(sprintf("../Objects/GRIDS_S/%d/%s/biodiversity.rda", picked_grids[grid_index,]$index, folxxx))
+      target_folder<-sprintf("../Objects/GRIDS_TIF/%d/%s", picked_grids[grid_index,]$index, folxxx)
+      es<-readRDS(sprintf("../Objects/GRIDS_S/%d/%s/es.rda", picked_grids[grid_index,]$index, folxxx))
+      
+      
+    }else{
+      biod<-readRDS(sprintf("../Objects/GRIDS_S/%d/%s/biodiversity_%.1f.rda", 
+                            picked_grids[grid_index,]$index, folxxx, sampling_proportion))
+      target_folder<-sprintf("../Objects/GRIDS_TIF/%d_sampling_%.1f/%s", 
+                             picked_grids[grid_index,]$index, sampling_proportion, folxxx)
+      es<-readRDS(sprintf("../Objects/GRIDS_S/%d/%s/es_%.1f.rda", 
+                          picked_grids[grid_index,]$index, folxxx, sampling_proportion))
+      
+    }
+    dir.create(target_folder, showWarnings = F, recursive = F)
     biod<-merge(biod, full_mask, by=c("mask", "res"), all=T)
     
     NoData<-biod[is.na(v), .(N_NoData=.N), by=list(res)]
@@ -62,7 +75,6 @@ if (F){
       }
     }
     
-    es<-readRDS(sprintf("../Objects/GRIDS_S/%d/%s/es.rda", picked_grids[grid_index,]$index, folxxx))
     es$mask<-as.numeric(es$cell)
     for (res_i in c("100km", "50km", "20km", "10km", "5km", "2km", "1km" )){
       for (col_item in c(unique(es$esNum))){
@@ -84,17 +96,25 @@ grid_index<-as.numeric(args[1])
 if (is.na(grid_index)){
   grid_index<-5
 }
-
-i=1
+sampling_proportion<-0.1
+i=3761
 #for (grid_index in c(1:nrow(picked_grids))){
 base<-sprintf("../Objects/GRIDS_S/%s", picked_grids[grid_index,]$index)
 TIF_base<-sprintf("../Objects/GRIDS_TIF/%s", picked_grids[grid_index,]$index)
 for (i in c(1:nrow(seeds))){
-  print(paste(grid_index, i))
+  print(paste(grid_index, i, sampling_proportion))
   seed<-seeds[i]
   folder<-sprintf("%s/%d", base, i)
-  target<-sprintf("%s/biodiversity.rda", folder)
-  target_folder<-sprintf("%s/%d", TIF_base, i)
+  if (sampling_proportion==1){
+    target<-sprintf("%s/biodiversity.rda", folder)
+  }else{
+    target<-sprintf("%s/biodiversity_sampling_%.1f.rda", folder, sampling_proportion)
+  }
+  if (sampling_proportion==1){
+    target_folder<-sprintf("%s/%d", TIF_base, i)
+  }else{
+    target_folder<-sprintf("%s_sampling_%.1f/%d", TIF_base, sampling_proportion, i)
+  }
   if (!dir.exists(target_folder)){
     dir.create(target_folder, recursive = T)
   }else{
@@ -132,8 +152,11 @@ for (i in c(1:nrow(seeds))){
       writeRaster(mask, sprintf("%s/%s_%s.tif", target_folder, res_i, col_item), overwrite=T)
     }
   }
-  
-  es<-readRDS(sprintf("%s/es.rda", folder))
+  if (sampling_proportion==1){
+    es<-readRDS(sprintf("%s/es.rda", folder))
+  }else{
+    es<-readRDS(sprintf("%s/es_%.1f.rda", folder, sampling_proportion))
+  }
   es$mask<-as.numeric(es$cell)
   for (res_i in c("100km", "50km", "20km", "10km", "5km", "2km", "1km" )){
     for (col_item in c(unique(es$esNum))){

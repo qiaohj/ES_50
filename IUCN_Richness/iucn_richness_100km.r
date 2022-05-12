@@ -23,6 +23,54 @@ if (F){
   values(mask_100km)<-v
   plot(mask_100km)
   writeRaster(mask_100km, "../Raster/mask_100km.tif")
+  
+  mask_100km<-projectRaster(bio, res=c(5e4, 5e4), crs=crs(mask), method = "ngb")
+  v<-values(mask_100km)
+  no<-!is.na(v)
+  v[no]<-c(1:length(no[no==T]))
+  values(mask_100km)<-v
+  plot(mask_100km)
+  writeRaster(mask_100km, "../Raster/mask_50km.tif")
+  
+  mask_100km<-projectRaster(bio, res=c(2e4, 2e4), crs=crs(mask), method = "ngb")
+  v<-values(mask_100km)
+  no<-!is.na(v)
+  v[no]<-c(1:length(no[no==T]))
+  values(mask_100km)<-v
+  plot(mask_100km)
+  writeRaster(mask_100km, "../Raster/mask_20km.tif")
+  
+  mask_100km<-projectRaster(bio, res=c(1e4, 1e4), crs=crs(mask), method = "ngb")
+  v<-values(mask_100km)
+  no<-!is.na(v)
+  v[no]<-c(1:length(no[no==T]))
+  values(mask_100km)<-v
+  plot(mask_100km)
+  writeRaster(mask_100km, "../Raster/mask_10km.tif")
+  
+  mask_100km<-projectRaster(bio, res=c(5e3, 5e3), crs=crs(mask), method = "ngb")
+  v<-values(mask_100km)
+  no<-!is.na(v)
+  v[no]<-c(1:length(no[no==T]))
+  values(mask_100km)<-v
+  plot(mask_100km)
+  writeRaster(mask_100km, "../Raster/mask_5km.tif")
+  
+  mask_100km<-projectRaster(bio, res=c(2e3, 2e3), crs=crs(mask), method = "ngb")
+  v<-values(mask_100km)
+  no<-!is.na(v)
+  v[no]<-c(1:length(no[no==T]))
+  values(mask_100km)<-v
+  plot(mask_100km)
+  writeRaster(mask_100km, "../Raster/mask_2km.tif", datatype="INT4S", overwrite=T)
+  
+  mask_100km<-projectRaster(bio, res=c(1e3, 1e3), crs=crs(mask), method = "ngb")
+  v<-values(mask_100km)
+  no<-!is.na(v)
+  v[no]<-c(1:length(no[no==T]))
+  values(mask_100km)<-v
+  plot(mask_100km)
+  writeRaster(mask_100km, "../Raster/mask_1km.tif", datatype="INT4S", overwrite=T)
 }
 
 mask<-raster("../Raster/mask_100km.tif")

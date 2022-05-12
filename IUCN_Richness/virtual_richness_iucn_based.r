@@ -132,7 +132,7 @@ for (j in c(1:nrow(picked_grids))){
 
 library(ggpubr)
 plist<-list()
-
+source("colors.r")
 for (j in c(1:nrow(picked_grids))){
   print(j)
   div<-raster(sprintf("../Objects/GRIDS_S/Diversity/%d.tif", picked_grids[j,]$index))
@@ -144,7 +144,7 @@ for (j in c(1:nrow(picked_grids))){
   p<-ggplot(div)+geom_tile(aes(x=x, y=y, fill=div))+
     coord_equal()+
     scale_fill_gradient(low=colors_blue[4], high=colors_red[7])+
-    theme_bw()+labs(fill="Species richness")+
+    theme_bw()+labs(fill="")+
     theme(axis.line = element_blank(),
           axis.text.x = element_blank(),
           axis.text.y = element_blank(),
@@ -158,7 +158,7 @@ for (j in c(1:nrow(picked_grids))){
   
 }
 
-pp<-ggarrange(plotlist=plist, ncol=5, nrow=2, labels=letters[1:10])
+pp<-ggarrange(plotlist=plist, ncol=5, nrow=2, labels=1:10)
 
 
 

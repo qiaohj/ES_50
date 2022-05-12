@@ -23,21 +23,28 @@ picked_grids<-readRDS("../Objects/virtual_lands/picked_grids.rda")
 grid_index=1
 effort_distance<-1000
 obuffers<-readRDS("../Objects/virtual_observing_events/random_observing_events.rda")
+sampling_proportion<-0.5
 
 for (grid_index in c(1:nrow(picked_grids))){
   base<-sprintf("../Objects/GRIDS_S/%s", picked_grids[grid_index,]$index)
-  virtual_species<-readRDS(sprintf("../Objects/GRIDS_S/species_points_%d.rda", picked_grids[grid_index,]$index))
   
-  species_points<-st_as_sf(virtual_species, coords = c("x", "y"))
-  print(grid_index)
+  print(paste(grid_index, sampling_proportion))
   folder<-sprintf("%s/random_sampling", base)
   if (!dir.exists(folder)){
     dir.create(folder)
   }
-  f<-sprintf("%s/observations.rda", folder)
+  virtual_species<-readRDS(sprintf("../Objects/GRIDS_S/species_points_%d.rda", picked_grids[grid_index,]$index))
   
-  collected_sp_index<-st_contains(obuffers, species_points)
-  saveRDS(collected_sp_index, f)
+  f<-sprintf("%s/observations.rda", folder)
+  if (file.exists(f)){
+    collected_sp_index<-readRDS(f)
+  }else{
+    
+    species_points<-st_as_sf(virtual_species, coords = c("x", "y"))
+    collected_sp_index<-st_contains(obuffers, species_points)
+    saveRDS(collected_sp_index, f)
+  }
+  
   
   #100 LC, 40 NT, 20 Vu, 10 En, CR
   sample_probability_Least_Concern<-1
@@ -51,10 +58,19 @@ for (grid_index in c(1:nrow(picked_grids))){
                       "Endangered"=sample_probability_Endangered,
                       "Critically Endangered"=sample_probability_Critically_Endangered)
   folder<-sprintf("%s/random_sampling", base)
-  target<-sprintf("%s/biodiversity.rda", folder)
+  if (sampling_proportion==1){
+    target<-sprintf("%s/biodiversity.rda", folder)
+    f_es<-sprintf("%s/es.rda", folder)
+  }else{
+    target<-sprintf("%s/biodiversity_%.1f.rda", folder, sampling_proportion)
+    f_es<-sprintf("%s/es_%.1f.rda", folder, sampling_proportion)
+  }
   f<-sprintf("%s/observations.rda", folder)
-  f_es<-sprintf("%s/es.rda", folder)
+  
   occ_index<-readRDS(f)
+  if (sampling_proportion!=1){
+    occ_index<-occ_index[sample(length(occ_index), length(occ_index)*sampling_proportion)]
+  }
   occ_index<-unlist(occ_index)
   virtual_species<-virtual_species[iucn_category %in% c("Critically Endangered", "Endangered",
                                                         "Least Concern", "Near Threatened", "Vulnerable")]

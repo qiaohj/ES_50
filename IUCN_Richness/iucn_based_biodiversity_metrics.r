@@ -82,9 +82,12 @@ args = commandArgs(trailingOnly=TRUE)
 grid_index=1
 grid_index<-as.numeric(args[1])
 if (is.na(grid_index)){
-  grid_index<-5
+  grid_index<-10
 }
-
+sampling_proportion<-as.numeric(args[2])
+if (is.na(sampling_proportion)){
+  sampling_proportion<-0.1
+}
 base<-sprintf("../Objects/GRIDS_S/%s", picked_grids[grid_index,]$index)
 
 virtual_species<-readRDS(sprintf("../Objects/GRIDS_S/species_points_%d.rda", picked_grids[grid_index,]$index))
@@ -107,11 +110,17 @@ probabilities<-list("Least Concern"=sample_probability_Least_Concern,
                     "Near Threatened"=sample_probability_Near_Threatened,
                     "Endangered"=sample_probability_Endangered,
                     "Critically Endangered"=sample_probability_Critically_Endangered)
-i<-369
+i<-3413
 for (i in c(1:nrow(seeds))){
   #for (i in c(1:400)){
   folder<-sprintf("%s/%d", base, i)
-  target<-sprintf("%s/biodiversity.rda", folder)
+  if (sampling_proportion==1){
+    target<-sprintf("%s/biodiversity.rda", folder)
+    f_es<-sprintf("%s/es.rda", folder)
+  }else{
+    target<-sprintf("%s/biodiversity_sampling_%.1f.rda", folder, sampling_proportion)
+    f_es<-sprintf("%s/es_%.1f.rda", folder, sampling_proportion)
+  }
   if (file.exists(target)){
     if (file.size(target)>100){
       next()
@@ -119,8 +128,11 @@ for (i in c(1:nrow(seeds))){
   }
   saveRDS(NULL, target)
   f<-sprintf("%s/observations.rda", folder)
-  f_es<-sprintf("%s/es.rda", folder)
+  
   occ_index<-readRDS(f)
+  if (sampling_proportion!=1){
+    occ_index<-occ_index[sample(length(occ_index), length(occ_index)*sampling_proportion)]
+  }
   occ_index<-unlist(occ_index)
   occ<-virtual_species[ID %in% occ_index]
   occ_list<-list()
@@ -134,11 +146,14 @@ for (i in c(1:nrow(seeds))){
     table(occ$iucn_category)
     table(occ_list$iucn_category)
   }
+  if (nrow(occ)==0){
+    next()
+  }
   j=1
   biodiversity_list<-list()
   es_list<-list()
   for (res in c("100km", "50km", "20km", "10km", "5km", "2km", "1km")){
-    print(paste("Grid:", grid_index, "seeds:", i, "/", nrow(seeds), "@", res))
+    print(paste("Grid:", grid_index, "seeds:", i, "/", nrow(seeds), "@", res, "sampling proportion:", sampling_proportion))
     occ_se<-occ[, .(N=.N), by=c(sprintf("mask_%s", res), "sp", "sp_id")]
     colnames(occ_se)[1]<-"mask"
     if (!file.exists(f_es)){
