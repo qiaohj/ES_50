@@ -74,7 +74,7 @@ for (res in c("100km", "50km", "20km", "10km", "5km", "2km", "1km")){
   colnames(mask_100km)[3]<-"group"
   all_df_100km_with_xy<-merge(all_df_100km, mask_100km, by="group", all=T)
   all_df_100km_with_xy<-all_df_100km_with_xy[!is.na(group)]
-  hist(all_df_100km_with_xy$N)
+  #hist(all_df_100km_with_xy$N)
   if (res %in% c("100km", "50km")){
     max_fix<-1e4
     if_scientific<-T
@@ -83,7 +83,7 @@ for (res in c("100km", "50km", "20km", "10km", "5km", "2km", "1km")){
     max_fix<-1e3
     if_scientific<-F
   }
-  if (res %in% c("20km", "10km")){
+  if (res %in% c("1km", "2km", "5km")){
     max_fix<-1e3
     if_scientific<-F
   }
@@ -94,6 +94,16 @@ for (res in c("100km", "50km", "20km", "10km", "5km", "2km", "1km")){
   labs[6]<-sprintf(">%s up to %s", labs[6], format(max_richness, scientific=if_scientific))
   all_df_100km_with_xy$fixed_N<-all_df_100km_with_xy$N
   all_df_100km_with_xy[N>max_fix]$fixed_N<-max_fix
+  mask<-raster(sprintf("../Raster/mask_%s.tif", res))
+  v<-values(mask)
+  no_na<-!is.na(v)
+  v[no_na]<-all_df_100km_with_xy$N
+  values(mask)<-v
+  writeRaster(mask, sprintf("../Figures/IUCN_Based_VW/TIFF/eBird_richness/eBird_N_Records_%s.tif", res), overwrite=T)
+  v[no_na]<-all_df_100km_with_xy$species.richness
+  values(mask)<-v
+  writeRaster(mask, sprintf("../Figures/IUCN_Based_VW/TIFF/eBird_richness/eBird_richness_%s.tif", res), overwrite=T)
+  
   p<-ggplot(all_df_100km_with_xy)+geom_tile(aes(x=x, y=y, fill=fixed_N), color=NA)+
     scale_fill_gradient(low=colors_blue[4], high=colors_red[7],
                         breaks=breaks, labels=labs)+
