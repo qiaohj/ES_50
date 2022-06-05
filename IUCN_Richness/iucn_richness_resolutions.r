@@ -133,7 +133,7 @@ if (F){
 source("colors.r")
 #df_list<-readRDS("../Objects/IUCN_Richness/iucn_richness_1km.rda")
 
-res<-"100km"
+res<-"1km"
 
 for (res in c("100km", "50km", "20km", "10km", "5km", "2km", "1km")){
   print(res)

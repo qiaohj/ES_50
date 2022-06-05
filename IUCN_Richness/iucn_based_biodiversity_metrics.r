@@ -82,7 +82,7 @@ args = commandArgs(trailingOnly=TRUE)
 grid_index=1
 grid_index<-as.numeric(args[1])
 if (is.na(grid_index)){
-  grid_index<-10
+  grid_index<-4
 }
 sampling_proportion<-as.numeric(args[2])
 if (is.na(sampling_proportion)){
@@ -110,7 +110,8 @@ probabilities<-list("Least Concern"=sample_probability_Least_Concern,
                     "Near Threatened"=sample_probability_Near_Threatened,
                     "Endangered"=sample_probability_Endangered,
                     "Critically Endangered"=sample_probability_Critically_Endangered)
-i<-3413
+
+i<-349
 for (i in c(1:nrow(seeds))){
   #for (i in c(1:400)){
   folder<-sprintf("%s/%d", base, i)

@@ -32,9 +32,16 @@ unique(all_metrics$var)
 all_metrics[res=="2km"]
 source("colors.r")
 if (F){
-  p<-ggplot(all_metrics[!is.na(Rsquared_with_na)])+
-    geom_smooth(aes(x=var, y=Rsquared_with_na, color=res_f), method="loess")+
-    #geom_point(aes(x=var, y=Rsquared_with_na, color=res_f), 
+  colorBlindBlack8  <- c("#000000", "#E69F00", "#56B4E9", "#009E73", 
+                         "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+  res_colors<-c("1km"=colorBlindBlack8[2], "2km"=colorBlindBlack8[3], 
+                "5km"=colorBlindBlack8[4], "10km"=colorBlindBlack8[5],
+                "20km"=colorBlindBlack8[6], "50km"=colorBlindBlack8[7],
+                "100km"=colorBlindBlack8[8])
+  
+  p<-ggplot(all_metrics[!is.na(Rsquared_without_na)])+
+    geom_smooth(aes(x=var, y=Rsquared_without_na, color=res_f), method="loess")+
+    #geom_point(aes(x=var, y=Rsquared_without_na, color=res_f), 
     #           position=position_dodge(width = 0.9))+
     scale_color_manual(values=res_colors, 
                        breaks=c("1km", "2km", "5km", "10km", "20km", "50km"))+
@@ -44,11 +51,12 @@ if (F){
     theme_bw()+
     facet_wrap(~sampling_proportion)+
     theme(strip.text.x = element_text(size = 20), strip.text.y = element_text(size = 20))
+  p
   ggsave(p, filename="../Figures/IUCN_Based_VW/metrics_loess.png", width=30, height=15)
   
   p<-ggplot(all_metrics)+
-    geom_smooth(aes(x=var, y=Rsquared_with_na, fill=res_f), method="loess", alpha=0.2)+
-    #geom_point(aes(x=var, y=Rsquared_with_na, color=res_f), 
+    geom_smooth(aes(x=var, y=Rsquared_without_na, fill=res_f), method="loess", alpha=0.2)+
+    #geom_point(aes(x=var, y=Rsquared_without_na, color=res_f), 
     #           position=position_dodge(width = 0.9))+
     scale_color_manual(values=res_colors, 
                        breaks=c("1km", "2km", "5km", "10km", "20km", "50km"))+
@@ -90,13 +98,13 @@ res_colors<-c("1km"=colorBlindBlack8[2], "2km"=colorBlindBlack8[3],
 
 p<-ggplot(all_metrics_se)+
   geom_errorbar(aes(x=var_f, 
-                    ymin=Rsquared_with_na-sd_Rsquared_with_na, 
-                    ymax=Rsquared_with_na+sd_Rsquared_with_na, color=res_f),
+                    ymin=Rsquared_without_na-sd_Rsquared_without_na, 
+                    ymax=Rsquared_without_na+sd_Rsquared_without_na, color=res_f),
                 position=position_dodge(width = 0.9), width=0.2)+
-  geom_point(aes(x=var_f, y=Rsquared_with_na, color=res_f), 
+  geom_point(aes(x=var_f, y=Rsquared_without_na, color=res_f), 
              position=position_dodge(width = 0.9))+
   geom_point(data=all_metrics_se_random, 
-             aes(x=var_f, y=Rsquared_with_na, color=res_f), 
+             aes(x=var_f, y=Rsquared_without_na, color=res_f), 
              position=position_dodge(width = 0.9), shape=6)+
   labs(x="Biodiversity metrics", y="R^2", fill="Resolution", color="Resolution")+
   scale_color_manual(values=res_colors, 
@@ -133,13 +141,13 @@ target_metrics<-c("es10",
 all_metrics_se2$grid_label<-letters[all_metrics_se2$grid_index]
 p<-ggplot(all_metrics_se2[var_f %in% target_metrics])+
   geom_errorbar(aes(x=var_f, 
-                    ymin=Rsquared_with_na-sd_Rsquared_with_na, 
-                    ymax=Rsquared_with_na+sd_Rsquared_with_na, color=res_f),
+                    ymin=Rsquared_without_na-sd_Rsquared_without_na, 
+                    ymax=Rsquared_without_na+sd_Rsquared_without_na, color=res_f),
                 position=position_dodge(width = 0.9), width=0.2)+
-  geom_point(aes(x=var_f, y=Rsquared_with_na, color=res_f), 
+  geom_point(aes(x=var_f, y=Rsquared_without_na, color=res_f), 
              position=position_dodge(width = 0.9))+
   geom_point(data=all_metrics_se_random[var_f %in% target_metrics], 
-             aes(x=var_f, y=Rsquared_with_na, color=res_f), 
+             aes(x=var_f, y=Rsquared_without_na, color=res_f), 
              position=position_dodge(width = 0.9), shape=6)+
   scale_color_manual(values=res_colors, 
                      breaks=c("1km", "2km", "5km", "10km", "20km", "50km"))+
@@ -170,11 +178,11 @@ var_colors<-colorBlindBlack8[2:7]
 names(var_colors)<-target_metrics
 p<-ggplot()+
   geom_smooth(data=all_metrics_se_road_fig, 
-             aes(x=n_road_5km/16e2, y=Rsquared_with_na, color=var_f), method="loess")+
+             aes(x=n_road_5km/16e2, y=Rsquared_without_na, color=var_f), method="loess")+
   geom_point(data=all_metrics_se_road_fig[sample(nrow(all_metrics_se_road_fig), 1e4)], 
-             aes(x=n_road_5km/16e2, y=Rsquared_with_na, color=var_f), size=0.3)+
+             aes(x=n_road_5km/16e2, y=Rsquared_without_na, color=var_f), size=0.3)+
   geom_hline(data=all_metrics_se_random[var_f %in% target_metrics], 
-             aes(yintercept=Rsquared_with_na, color=var_f), size=0.5, linetype=2)+
+             aes(yintercept=Rsquared_without_na, color=var_f), size=0.5, linetype=2)+
   scale_color_manual(values=var_colors, 
                      breaks=target_metrics)+
   labs(x="Road (with 5km buffer) coverage (%)", y="R^2", fill="Biodiversity metrics", color="Biodiversity metrics")+
@@ -212,11 +220,11 @@ for (sp in c(100, 500, 1000)){
   item2<-all_metrics_se_random[sampling_proportion==sp]
   p<-ggplot()+
     geom_smooth(data=item1, 
-                aes(x=n_road_5km/16e2, y=Rsquared_with_na, color=var_f), method="loess")+
+                aes(x=n_road_5km/16e2, y=Rsquared_without_na, color=var_f), method="loess")+
     geom_point(data=item1[sample(nrow(item1), 1e1)], 
-               aes(x=n_road_5km/16e2, y=Rsquared_with_na, color=var_f), size=0.3)+
+               aes(x=n_road_5km/16e2, y=Rsquared_without_na, color=var_f), size=0.3)+
     geom_hline(data=item2[var_f %in% target_metrics], 
-               aes(yintercept=Rsquared_with_na, color=var_f), size=0.5, linetype=2)+
+               aes(yintercept=Rsquared_without_na, color=var_f), size=0.5, linetype=2)+
     scale_color_manual(values=var_colors, 
                        breaks=target_metrics)+
     ggtitle(sprintf("Number of sampling events: %d", sp))+
