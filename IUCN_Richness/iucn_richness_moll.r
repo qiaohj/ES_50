@@ -2,6 +2,7 @@ library(raster)
 library(data.table)
 setwd("/media/huijieqiao/SSD_Fast/ES50_eBird/ES_50")
 mask_1km<-raster("../Raster/mask_1km.tif")
+
 print("Reading mask points")
 mask_points_full_resolutions<-readRDS("../Objects/mask_points_full_resolutions.rda")
 setkeyv(mask_points_full_resolutions, "mask_1km")

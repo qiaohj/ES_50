@@ -13,66 +13,6 @@ library(ggplot2)
 
 setwd("/media/huijieqiao/SSD_Fast/ES50_eBird/ES_50")
 
-if (F){
-  mask<-raster("../Raster/ndvi/mean_ndvi_moll_10km.tif")
-  bio<-raster("../Raster/bioclim/wc2.1_10m_bio_1.tif")
-  mask_100km<-projectRaster(bio, res=c(1e5, 1e5), crs=crs(mask), method = "ngb")
-  v<-values(mask_100km)
-  no<-!is.na(v)
-  v[no]<-c(1:length(no[no==T]))
-  values(mask_100km)<-v
-  plot(mask_100km)
-  writeRaster(mask_100km, "../Raster/mask_100km.tif")
-  
-  mask_100km<-projectRaster(bio, res=c(5e4, 5e4), crs=crs(mask), method = "ngb")
-  v<-values(mask_100km)
-  no<-!is.na(v)
-  v[no]<-c(1:length(no[no==T]))
-  values(mask_100km)<-v
-  plot(mask_100km)
-  writeRaster(mask_100km, "../Raster/mask_50km.tif")
-  
-  mask_100km<-projectRaster(bio, res=c(2e4, 2e4), crs=crs(mask), method = "ngb")
-  v<-values(mask_100km)
-  no<-!is.na(v)
-  v[no]<-c(1:length(no[no==T]))
-  values(mask_100km)<-v
-  plot(mask_100km)
-  writeRaster(mask_100km, "../Raster/mask_20km.tif")
-  
-  mask_100km<-projectRaster(bio, res=c(1e4, 1e4), crs=crs(mask), method = "ngb")
-  v<-values(mask_100km)
-  no<-!is.na(v)
-  v[no]<-c(1:length(no[no==T]))
-  values(mask_100km)<-v
-  plot(mask_100km)
-  writeRaster(mask_100km, "../Raster/mask_10km.tif")
-  
-  mask_100km<-projectRaster(bio, res=c(5e3, 5e3), crs=crs(mask), method = "ngb")
-  v<-values(mask_100km)
-  no<-!is.na(v)
-  v[no]<-c(1:length(no[no==T]))
-  values(mask_100km)<-v
-  plot(mask_100km)
-  writeRaster(mask_100km, "../Raster/mask_5km.tif")
-  
-  mask_100km<-projectRaster(bio, res=c(2e3, 2e3), crs=crs(mask), method = "ngb")
-  v<-values(mask_100km)
-  no<-!is.na(v)
-  v[no]<-c(1:length(no[no==T]))
-  values(mask_100km)<-v
-  plot(mask_100km)
-  writeRaster(mask_100km, "../Raster/mask_2km.tif", datatype="INT4S", overwrite=T)
-  
-  mask_100km<-projectRaster(bio, res=c(1e3, 1e3), crs=crs(mask), method = "ngb")
-  v<-values(mask_100km)
-  no<-!is.na(v)
-  v[no]<-c(1:length(no[no==T]))
-  values(mask_100km)<-v
-  plot(mask_100km)
-  writeRaster(mask_100km, "../Raster/mask_1km.tif", datatype="INT4S", overwrite=T)
-}
-
 mask<-raster("../Raster/mask_100km.tif")
 x = read_stars("../Raster/mask_100km.tif")
 grids<-st_as_sf(x[1], as_points = FALSE, merge = FALSE, crs=st_crs(mask))
