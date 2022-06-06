@@ -29,11 +29,14 @@ p<-ggplot()+geom_sf(data=one_observer, color=colors_black[9], fill=NA)+
 ggsave(p, filename="../Figures/VW/virtual_observing_event.png", width=6, height=6)
 
 mask_index<-349
+proportion<-100
+
 road_points<-readRDS(sprintf("../Objects/virtual_lands/items/%d/road_points.rda", mask_index))
 px<-ggplot(road_points)+geom_tile(aes(x=x, y=y, fill=type))+scale_fill_manual(values=road_colors)+coord_equal()
-p1<-px+geom_sf(data=random_observing_events, fill=NA, color=colors_red[4])
+p1<-px+geom_sf(data=random_observing_events[sample(1000, proportion),], fill=NA, color=colors_red[4])
 p1<-p1+map_theme
-ggsave(p1, filename="../Figures/VW/random_virtual_observing_event.png", width=6, height=6)
+ggsave(p1, filename=
+         sprintf("../Figures/VW/random_virtual_observing_event_%d.png", proportion), width=6, height=6)
 
 
 observing_events<-readRDS(sprintf("../Objects/virtual_lands/items/%d/observing_events.rda", mask_index))
@@ -46,11 +49,11 @@ buffers<-st_buffer(points, effort_distance)
 #ggplot()+geom_sf(data=buffers, aes(color=type))
 
 p2<-ggplot(road_points)+geom_tile(aes(x=x, y=y, fill=type))+
-  geom_sf(data=buffers, aes(color=type))+
+  geom_sf(data=buffers[sample(1000, proportion),], aes(color=type))+
   geom_tile(data=road_points[type=="on road"], aes(x=x, y=y, fill=type))+
   scale_fill_manual(values=road_colors)+
   scale_color_manual(values=observing_colors)+
   map_theme
-ggsave(p2, filename="../Figures/VW/road_based_virtual_observing_event.png", width=6, height=6)
+ggsave(p2, filename=sprintf("../Figures/VW/road_based_virtual_observing_event_%d.png", proportion), width=6, height=6)
 p<-ggarrange(plotlist=list(p1, p2), nrow=1, ncol=2)
-ggsave(p, filename="../Figures/VW/virtual_observing_events_full.png", width=8, height=4)
+ggsave(p, filename=sprintf("../Figures/VW/virtual_observing_events_full_%d.png", proportion), width=8, height=4)

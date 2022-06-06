@@ -3,7 +3,9 @@ library(raster)
 library(ggplot2)
 library(ggpubr)
 setwd("/media/huijieqiao/SSD_Fast/ES50_eBird/ES_50")
-grids_full<-readRDS("../Objects/IUCN_Distributions/iucn_richness_full_100km.rda")
+#grids_full<-readRDS("../Objects/IUCN_Distributions/iucn_richness_full_100km.rda")
+grids_full<-data.table(rasterToPoints(raster("../Figures/IUCN_Based_VW/TIFF/IUCN_richness/IUCN_richness_10km.tif")))
+colnames(grids_full)[3]<-"species.richness"
 source("colors.r")
 max_fix<-500
 grids_full$fixed_species.richness<-grids_full$species.richness
@@ -15,7 +17,7 @@ labs[5]<-sprintf(">500 up to %d", max_richness)
 picked_grids<-readRDS("../Objects/virtual_lands/picked_grids.rda")
 source("colors.r")
 
-p<-ggplot(grids_full)+geom_sf(aes(fill=fixed_species.richness), color=NA)+
+p<-ggplot(grids_full)+geom_tile(aes(x=x, y=y, fill=fixed_species.richness), color=NA)+
   geom_sf(data=picked_grids, fill=NA, color="black", linetype=1)+
   geom_sf_text(data=picked_grids, aes(label = c(1:10)), colour = "black", size=2.8)+
   scale_fill_gradient(low=colors_blue[4], high=colors_red[7],
