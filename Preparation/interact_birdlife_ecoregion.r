@@ -1,5 +1,6 @@
 library(sf)
 library(data.table)
+sf_use_s2(FALSE)
 setwd("/media/huijieqiao/SSD_Fast/ES50_eBird/ES_50")
 birdlife<-readRDS("../Shape/Birdlife_202101_fixed.rda")
 ecoregion<-sf::st_read(dsn = "../Shape/Ecoregions2017", 
@@ -8,14 +9,19 @@ ecoregion<-sf::st_read(dsn = "../Shape/Ecoregions2017",
 species<-unique(birdlife$binomial)
 sp<-species[1]
 sp_region_all<-list()
+species<-species[sample(length(species), length(species))]
 for (sp in species){
   print(sp)
-  target<-sprintf("../Tables/Species_ecoregion/%s.rda", sp)
+  target<-sprintf("../Tables/Species_ecoregion_native_only/%s.rda", sp)
   if (file.exists(target)){
     next()
   }
   saveRDS(NULL, target)
   sp_layer<-birdlife[which(birdlife$binomial==sp),]
+  sp_layer<-sp_layer[which(sp_layer$origin %in% c(1,2,5,6)),]
+  if (nrow(sp_layer)==0){
+    next()
+  }
   index<-st_intersects(sp_layer, ecoregion)
   overlapped<-ecoregion[unlist(index),]
   if (F){
@@ -39,9 +45,9 @@ for (sp in species){
 sp_region_all<-list()
 for (sp in species){
   print(sp)
-  target<-sprintf("../Tables/Species_ecoregion/%s.rda", sp)
+  target<-sprintf("../Tables/Species_ecoregion_native_only/%s.rda", sp)
   sp_region<-readRDS(target)
   sp_region_all[[sp]]<-sp_region
 }
 sp_region_all<-rbindlist(sp_region_all)
-saveRDS(sp_region_all, "../Tables/birdlife_ecoregion.rda")
+saveRDS(sp_region_all, "../Tables/birdlife_ecoregion_native_only.rda")
