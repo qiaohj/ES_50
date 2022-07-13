@@ -5,17 +5,6 @@ library(gdalUtilities)
 library(raster)
 library(ggplot2)
 setwd("/media/huijieqiao/SSD_Fast/ES50_eBird/ES_50")
-if (F){
-  cols<-c("x", "y")
-  r<-data.table(rasterToPoints(raster("../Raster/mask_1km.tif")))
-  r$mask_2km<-raster::extract(raster("../Raster/mask_2km.tif"), r[, ..cols])
-  r$mask_5km<-raster::extract(raster("../Raster/mask_5km.tif"), r[, ..cols])
-  r$mask_10km<-raster::extract(raster("../Raster/mask_10km.tif"), r[, ..cols])
-  r$mask_20km<-raster::extract(raster("../Raster/mask_20km.tif"), r[, ..cols])
-  r$mask_50km<-raster::extract(raster("../Raster/mask_50km.tif"), r[, ..cols])
-  r$mask_100km<-raster::extract(raster("../Raster/mask_100km.tif"), r[, ..cols])
-  saveRDS(r, "../Objects/mask_points_full_resolutions.rda")
-}
 
 if (F){
   r<-readRDS("../Objects/mask_points_full_resolutions.rda")
