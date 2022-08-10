@@ -56,13 +56,20 @@ saveRDS(full_all_df_merge, "../Tables/realm_stat.rda")
 write.csv(full_all_df_merge, "../Tables/realm_stat.csv", row.names = F)
 saveRDS(all_df_out_df, "../Tables/realm_wrong.rda")
 write.csv(all_df_out_df, "../Tables/realm_wrong.csv", row.names = F)
-df_out_yearly<-all_df_out_df[, .(N=.N), by=list(SCIENTIFIC_NAME, COUNTRY, STATE, COUNTY, COUNTY_CODE,LOCALITY_ID,
+df_out_yearly<-all_df_out_df[, .(N=.N), by=list(SCIENTIFIC_NAME, COUNTRY, STATE, COUNTY, 
+                                                COUNTY_CODE,LOCALITY_ID,
                                                 LATITUDE, LONGITUDE,
                                                 YEAR, IN_REALM)]
+
 saveRDS(df_out_yearly, "../Tables/realm_wrong_yearly.rda")
 write.csv(df_out_yearly, "../Tables/realm_wrong_yearly.csv", row.names = F)
 
 df_out_yearly<-readRDS("../Tables/realm_wrong_yearly.rda")
+all_df_out_df<-readRDS("../Tables/realm_wrong.rda")
+full_all_df_merge<-readRDS("../Tables/realm_stat.rda")
+
+
+length(unique(df_out_yearly$SCIENTIFIC_NAME))
 df_xxx<-df_out_yearly[, .(N=.N), by=list(SCIENTIFIC_NAME, IN_REALM)]
 df_xxx[N==max(df_xxx$N)]
 full_all_df_merge[SCIENTIFIC_NAME=="Acridotheres cristatellus"]
