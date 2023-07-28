@@ -180,7 +180,37 @@ for (i in c(1:nrow(seeds))){
 result<-rbindlist(result)
 result
 saveRDS(result, "../Objects/virtual_lands/virtual_lands_property.rda")
-
+if (F){
+  result<-readRDS("../Objects/virtual_lands/virtual_lands_property.rda")
+  hist(result$n_no_road_2km)
+  ggplot(result$n_road_2km)
+  result$road_0km_p<-result$n_road_0km/result$n_ndvi
+  result$road_2km_p<-result$n_road_2km/result$n_ndvi
+  result$road_5km_p<-result$n_road_5km/result$n_ndvi
+  result$road_0km_int<-round(result$road_0km_p * 100)
+  result$road_2km_int<-round(result$road_2km_p * 100)
+  result$road_5km_int<-round(result$road_5km_p * 100)
+  result_se_0km<-result[, .(N=.N), by=list(road_0km_int)]
+  colnames(result_se_0km)[1]<-"bin"
+  result_se_0km$buffer_size<-"0KM"
+  
+  result_se_2km<-result[, .(N=.N), by=list(road_2km_int)]
+  colnames(result_se_2km)[1]<-"bin"
+  result_se_2km$buffer_size<-"2KM"
+  
+  result_se_5km<-result[, .(N=.N), by=list(road_5km_int)]
+  colnames(result_se_5km)[1]<-"bin"
+  result_se_5km$buffer_size<-"5KM"
+  result_se<-rbindlist(list(result_se_0km, result_se_2km, result_se_5km))
+  p<-ggplot(result_se)+geom_line(aes(x=bin, y=N, color=buffer_size))+
+    scale_y_sqrt()+
+    theme_bw()+
+    labs(x="Road coverage (%)", y="Number of virtual lands", color="Buffer size")+
+    scale_color_manual(values=c("0KM"=colors_red[8],
+                                "2KM"=colors_green[8],
+                                "5KM"=colors_blue[8]))
+  ggsave(p, filename="../Figures/road_coverage.png", width=8, height=4)
+}
 hist(result$n_road_2km)
 hist(result$n_road_5km)
 
