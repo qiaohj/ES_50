@@ -29,7 +29,7 @@ if (is.na(sampling_proportion)){
 }
 
 coms<-data.table(expand.grid(var=vars, res=res, gird_index=grid_index, stringsAsFactors = F))
-i=2
+i=119
 all_metrics<-list()
 for (i in 1:nrow(coms)){
   com<-coms[i]

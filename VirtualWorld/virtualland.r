@@ -184,9 +184,9 @@ if (F){
   result<-readRDS("../Objects/virtual_lands/virtual_lands_property.rda")
   hist(result$n_no_road_2km)
   ggplot(result$n_road_2km)
-  result$road_0km_p<-result$n_road_0km/result$n_ndvi
-  result$road_2km_p<-result$n_road_2km/result$n_ndvi
-  result$road_5km_p<-result$n_road_5km/result$n_ndvi
+  result$road_0km_p<-result$n_road_0km/160000
+  result$road_2km_p<-result$n_road_2km/160000
+  result$road_5km_p<-result$n_road_5km/160000
   result$road_0km_int<-round(result$road_0km_p * 100)
   result$road_2km_int<-round(result$road_2km_p * 100)
   result$road_5km_int<-round(result$road_5km_p * 100)
